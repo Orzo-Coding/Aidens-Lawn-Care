@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aiden's Lawn Care</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        section {
+            margin: 20px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #4CAF50;
+            color: white;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        /* Booking Form Styling */
+        form {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+
+        label, input, select, button {
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+        }
+
+        /* Admin Panel Styles */
+        #bookings-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        #bookings-table th, #bookings-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        #bookings-table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #edit-form-container {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+        }
+
+        /* Style updates for login form */
+        #login {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+
+        #login-form label, #login-form input {
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        #login-message {
+            margin-top: 10px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Aiden's Lawn Care</h1>
+        <nav>
+            <ul>
+                <li><a href="#" id="logout-link" style="display:none;">Logout</a></li> <!-- Logout link -->
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Services Section -->
+    <section id="services">
+        <h2>Our Services</h2>
+        <ul>
+            <li>Lawn Mowing</li>
+            <li>Fertilizing</li>
+            <li>Weed Control</li>
+            <li>Mulching</li>
+        </ul>
+    </section>
+
+    <!-- Booking Form Section -->
+    <section id="booking">
+        <h2>Book a Service</h2>
+        <form id="booking-form">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" required><br>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" required><br>
+
+            <label for="date">Preferred Date:</label>
+            <input type="date" id="date" required><br>
+
+            <label for="service">Choose Service:</label>
+            <select id="service" required>
+                <option value="Lawn Mowing">Lawn Mowing</option>
+                <option value="Fertilizing">Fertilizing</option>
+                <option value="Weed Control">Weed Control</option>
+                <option value="Mulching">Mulching</option>
+            </select><br>
+
+            <button type="submit">Book Now</button>
+        </form>
+        <div id="success-message"></div>
+    </section>
+
+    <!-- Login Form Section -->
+    <section id="login" style="display:none;">
+        <h2>Admin Login</h2>
+        <form id="login-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" required><br>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" required><br>
+
+            <button type="submit">Login</button>
+        </form>
+        <div id="login-message"></div>
+    </section>
+
+    <!-- Admin Panel Section -->
+    <section id="admin" style="display:none;">
+        <h2>Admin Panel - View Bookings</h2>
+        <table id="bookings-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Date</th>
+                    <th>Service</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="bookings-list">
+                <!-- Bookings will be displayed here -->
+            </tbody>
+        </table>
+        <div id="edit-form-container" style="display:none;">
+            <h3>Edit Booking</h3>
+            <form id="edit-form">
+                <label for="edit-name">Full Name:</label>
+                <input type="text" id="edit-name" required><br>
+
+                <label for="edit-email">Email:</label>
+                <input type="email" id="edit-email" required><br>
+
+                <label for="edit-date">Preferred Date:</label>
+                <input type="date" id="edit-date" required><br>
+
+                <label for="edit-service">Choose Service:</label>
+                <select id="edit-service" required>
+                    <option value="Lawn Mowing">Lawn Mowing</option>
+                    <option value="Fertilizing">Fertilizing</option>
+                    <option value="Weed Control">Weed Control</option>
+                    <option value="Mulching">Mulching</option>
+                </select><br>
+
+                <button type="submit">Update Booking</button>
+            </form>
+        </div>
+    </section>
+
+
+    <script>
+        // Hardcoded admin credentials
+        const adminCredentials = {
+            username: "Admin1",
+            password: "832651"
+        };
+
+        // Check if user is authenticated
+        function isAuthenticated() {
+            return localStorage.getItem("isAuthenticated") === "true";
+        }
+
+        // Handle form submission for booking
+        document.getElementById("booking-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const date = document.getElementById("date").value;
+            const service = document.getElementById("service").value;
+
+            const booking = {
+                id: Date.now(),
+                name: name,
+                email: email,
+                date: date,
+                service: service
+            };
+
+            let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+            bookings.push(booking);
+            localStorage.setItem("bookings", JSON.stringify(bookings));
+
+            document.getElementById("success-message").innerText = "Booking successful!";
+            document.getElementById("booking-form").reset();
+
+            displayBookings();
+        });
+
+        // Admin Authentication (Login)
+        document.getElementById("login-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            if (username === adminCredentials.username && password === adminCredentials.password) {
+                localStorage.setItem("isAuthenticated", "true");
+                document.getElementById("login-message").innerText = "Login successful!";
+                document.getElementById("login").style.display = "none";
+                document.getElementById("admin").style.display = "block";
+                document.getElementById("logout-link").style.display = "inline";
+                displayBookings();
+            } else {
+                document.getElementById("login-message").innerText = "Invalid credentials!";
+            }
+        });
+
+        // Logout functionality
+        document.getElementById("logout-link").addEventListener("click", function() {
+            localStorage.removeItem("isAuthenticated");
+            document.getElementById("admin").style.display = "none";
+            document.getElementById("login").style.display = "block";
+            document.getElementById("logout-link").style.display = "none";
+        });
+
+        // Show Admin Panel if authenticated
+        window.onload = function() {
+            if (isAuthenticated()) {
+                document.getElementById("admin").style.display = "block";
+                document.getElementById("login").style.display = "none";
+                document.getElementById("logout-link").style.display = "inline";
+                displayBookings();
+            } else {
+                document.getElementById("admin").style.display = "none";
+                document.getElementById("login").style.display = "block";
+                document.getElementById("logout-link").style.display = "none";
+            }
+        };
+
+        // Fetch bookings
+        function fetchBookings() {
+            return JSON.parse(localStorage.getItem("bookings")) || [];
+        }
+
+        // Display bookings in Admin Panel
+        function displayBookings() {
+            const bookings = fetchBookings();
+            const bookingsList = document.getElementById("bookings-list");
+            bookingsList.innerHTML = "";
+
+            bookings.forEach(booking => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${booking.name}</td>
+                    <td>${booking.email}</td>
+                    <td>${booking.date}</td>
+                    <td>${booking.service}</td>
+                    <td>
+                        <button onclick="editBooking(${booking.id})">Edit</button>
+                        <button onclick="deleteBooking(${booking.id})">Delete</button>
+                    </td>
+                `;
+                bookingsList.appendChild(row);
+            });
+        }
+
+        // Edit booking (existing functionality)
+        function editBooking(id) {
+            // Same as before
+        }
+
+        // Delete booking (existing functionality)
+        function deleteBooking(id) {
+            let bookings = fetchBookings();
+            bookings = bookings.filter(b => b.id !== id);
+            localStorage.setItem("bookings", JSON.stringify(bookings));
+            displayBookings();
+        }
+    </script>
+</body>
+</html>
